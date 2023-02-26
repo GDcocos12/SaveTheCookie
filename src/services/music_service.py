@@ -14,7 +14,8 @@ class MusicService:
             AUDIO_DIR / "game1.mp3",
             AUDIO_DIR / "game2.mp3",
             AUDIO_DIR / "game3.mp3",
-            AUDIO_DIR / "game4.mp3"
+            AUDIO_DIR / "game4.mp3",
+            AUDIO_DIR / "game5.mp3"
         ]
 
     @staticmethod
