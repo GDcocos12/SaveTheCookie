@@ -1,5 +1,6 @@
 import sys
 import time
+import random
 
 import pygame
 
@@ -8,20 +9,24 @@ from src.components.hand import Hand
 from src.components.hand_side import HandSide
 from src.components.player import Player
 from src.components.scoreboard import Scoreboard
+from src.components.gift import Gift  # Добавлен импорт класса Gift
 from src.global_state import GlobalState
 from src.services.music_service import MusicService
 from src.services.visualization_service import VisualizationService
 from src.utils.tools import update_background_using_scroll, update_press_key, is_close_app_event
+from src.config import Config
 
 GlobalState.load_main_screen()
 VisualizationService.load_main_game_displays()
 
 scoreboard = Scoreboard()
+gift_spawn_counter = 0
 
 # Sprite Setup
 P1 = Player()
 H1 = Hand(HandSide.RIGHT)
 H2 = Hand(HandSide.LEFT)
+gift = None
 
 # Sprite Groups
 hands = pygame.sprite.Group()
@@ -34,6 +39,9 @@ all_sprites.add(H2)
 
 
 def main_menu_phase():
+    if gift is not None:
+        gift.kill()
+
     scoreboard.reset_current_score()
 
     events = pygame.event.get()
@@ -53,6 +61,9 @@ def main_menu_phase():
 
 
 def gameplay_phase():
+    global gift_spawn_counter
+    global gift
+
     events = pygame.event.get()
 
     for event in events:
@@ -61,6 +72,7 @@ def gameplay_phase():
             return
 
     P1.update()
+
     H1.move(scoreboard, P1.player_position)
     H2.move(scoreboard, P1.player_position)
 
@@ -78,15 +90,49 @@ def gameplay_phase():
         time.sleep(0.5)
         game_over()
 
+    if gift is None:
+        if scoreboard._current_score >= gift_spawn_counter + 5:
+            gift_spawn_counter = scoreboard._current_score
+            spawn_gift()
+
+    if gift is not None:
+        if pygame.sprite.collide_rect(P1, gift):
+            #gift_spawn_counter = int(scoreboard._current_score * 1.2) + 2
+            #scoreboard._current_score = int(scoreboard._current_score * 1.2)
+            gift_spawn_counter = scoreboard._current_score + 10
+            scoreboard._current_score = scoreboard._current_score + 5
+            MusicService.play_gift_bonus_sound()
+            gift.kill()
+            gift = None
+        else:
+            gift.draw(GlobalState.SCREEN)
+
+def spawn_gift():
+    global gift
+
+    MusicService.play_gift_spawn_sound()
+
+    x = random.randint(0, Config.WIDTH - Gift.WIDTH)
+    y = right_y()
+
+    gift = Gift(x, y)
 
 def exit_game_phase():
     pygame.quit()
     sys.exit()
 
+def right_y():
+    y = 300
+    while y < 100:
+        y = random.randint(0, Config.HEIGHT - Gift.HEIGHT)
+    return y
 
 def game_over():
+    global gift_spawn_counter
+
     P1.reset()
     H1.reset()
     H2.reset()
+    gift_spawn_counter = 0
     GlobalState.GAME_STATE = GameStatus.MAIN_MENU
     time.sleep(0.5)
