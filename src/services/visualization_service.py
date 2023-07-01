@@ -23,6 +23,10 @@ class VisualizationService:
         return pygame.image.load(ASSETS_DIR / "dotted_line.png").convert_alpha()
 
     @staticmethod
+    def get_gift_image():
+        return pygame.image.load(ASSETS_DIR / "coolgift.png").convert_alpha()
+
+    @staticmethod
     def get_background_image():
         return pygame.image.load(ASSETS_DIR / "bg.png").convert_alpha()
 
