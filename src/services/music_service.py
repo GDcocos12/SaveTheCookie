@@ -66,6 +66,16 @@ class MusicService:
         pygame.mixer.Sound.play(score_sfx)
 
     @staticmethod
+    def play_gift_spawn_sound():
+        gspawn_sfx = pygame.mixer.Sound(AUDIO_DIR / "spawngift.wav")
+        pygame.mixer.Sound.play(gspawn_sfx)
+
+    @staticmethod
+    def play_gift_bonus_sound():
+        gbonus_sfx = pygame.mixer.Sound(AUDIO_DIR / "bonussound.wav")
+        pygame.mixer.Sound.play(gbonus_sfx)
+
+    @staticmethod
     def play_slap_sound():
         slap_sfxs = MusicService.get_death_sound()
         deathfile = pygame.mixer.Sound(random.choice(slap_sfxs))
