@@ -8,4 +8,4 @@ Save the cookie from knives!!!
 
 # How to start
 
-Run `python3 main.py` from game folder to start
+Just download .zip from `Releases` and run `SaveTheCookie`
